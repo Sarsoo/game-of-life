@@ -2,7 +2,6 @@ mod utils;
 
 use std::cmp::Ordering;
 use std::fmt;
-use std::time::SystemTime;
 
 use wasm_bindgen::prelude::*;
 use rand::prelude::*;

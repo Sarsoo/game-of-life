@@ -1,20 +1,33 @@
 mod utils;
 
-// use std::cmp::Ordering;
+use std::cmp::Ordering;
 use std::fmt;
+use std::time::SystemTime;
 
 use wasm_bindgen::prelude::*;
+use rand::prelude::*;
+
+use rand_pcg::Pcg64Mcg;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+// #[cfg(feature = "wee_alloc")]
+// #[global_allocator]
+// static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 macro_rules! log {
     ( $( $t:tt )* ) => {
         web_sys::console::log_1(&format!( $( $t )* ).into());
     }
+}
+
+#[wasm_bindgen]
+pub fn init() {
+    log!("initialising wasm");
+    utils::set_panic_hook();
+
+    #[cfg(feature = "random_init")]
+    log!("random layout enabled");
 }
 
 #[wasm_bindgen]
@@ -30,6 +43,9 @@ pub struct Universe {
     width: u32,
     height: u32,
     cells: Vec<Cell>,
+
+    rng: Pcg64Mcg,
+    rand_threshold: u32,
 }
 
 impl Universe {
@@ -54,11 +70,21 @@ impl Universe {
         count
     }
 
+    #[cfg(not(feature = "random_init"))]
     fn populate_cell(i: u32) -> Cell {
         if i % 2 == 0 || i % 7 == 0 {
             Cell::Alive
         } else {
             Cell::Dead
+        }
+    }
+
+    #[cfg(feature = "random_init")]
+    fn populate_cell(i: u32, rng: &mut Pcg64Mcg, threshold: u32) -> Cell {
+        match rng.gen_range(0, 101).cmp(&threshold) {
+            Ordering::Less => Cell::Alive,
+            Ordering::Greater => Cell::Dead,
+            Ordering::Equal => Cell::Dead,
         }
     }
 }
@@ -99,12 +125,17 @@ impl Universe {
         self.cells = next;
     }
 
-    pub fn new(width: u32, height: u32) -> Universe {
+    pub fn new(width: u32, height: u32, rand_threshold: u32, seed: f64) -> Universe {
         log!("Generating new board {}x{}", width, height);
+
+        let mut rng = Pcg64Mcg::seed_from_u64(seed as u64);
 
         let cells = (0..width * height)
             .map(|i| {
-                Universe::populate_cell(i)
+                #[cfg(not(feature = "random_init"))]
+                return Universe::populate_cell(i);
+                #[cfg(feature = "random_init")]
+                return Universe::populate_cell(i, &mut rng, rand_threshold);
             })
             .collect();
 
@@ -112,6 +143,9 @@ impl Universe {
             width,
             height,
             cells,
+            
+            rng,
+            rand_threshold,
         }
     }
 
@@ -134,7 +168,10 @@ impl Universe {
     pub fn reset(&mut self) {
         self.cells = (0..self.width * self.height)
                         .map(|i| {
-                            Universe::populate_cell(i)
+                            #[cfg(not(feature = "random_init"))]
+                            return Universe::populate_cell(i);
+                            #[cfg(feature = "random_init")]
+                            return Universe::populate_cell(i, &mut self.rng, self.rand_threshold);
                         })
                         .collect();
     }

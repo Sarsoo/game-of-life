@@ -8,6 +8,8 @@ use rand::prelude::*;
 
 use rand_pcg::Pcg64Mcg;
 
+mod time;
+
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 // #[cfg(feature = "wee_alloc")]
@@ -80,7 +82,7 @@ impl Universe {
 
     #[cfg(feature = "random_init")]
     fn populate_cell(i: u32, rng: &mut Pcg64Mcg, threshold: u32) -> Cell {
-        match rng.gen_range(0, 101).cmp(&threshold) {
+        match rng.gen_range(0..101).cmp(&threshold) {
             Ordering::Less => Cell::Alive,
             Ordering::Greater => Cell::Dead,
             Ordering::Equal => Cell::Dead,
@@ -88,10 +90,11 @@ impl Universe {
     }
 }
 
-#[wasm_bindgen]
+#[wasm_bindgen] // public methods exported to js
 impl Universe {
     pub fn tick(&mut self) {
         // log!("ticking");
+        let _timer = time::Timer::new("Universe::tick"); // will stop when dropped
         let mut next = self.cells.clone();
 
         for row in 0..self.height {

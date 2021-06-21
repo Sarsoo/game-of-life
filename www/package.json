@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/Sarsoo/game-of-life#readme",
   "dependencies": {
-    "game-of-life": "file:../pkg"
+    "gameoflife": "file:../pkg"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^9.0.0",

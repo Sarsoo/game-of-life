@@ -1,5 +1,5 @@
-import { Universe, Cell, init } from "game-of-life";
-import { memory } from "game-of-life/game_of_life_bg.wasm";
+import { Universe, Cell, init } from "gameoflife";
+import { memory } from "gameoflife/gameoflife_bg.wasm";
 
 // let PLAY = true;
 // let PLAY = false;

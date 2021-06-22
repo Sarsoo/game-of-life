@@ -94,7 +94,7 @@ impl Universe {
 impl Universe {
     pub fn tick(&mut self) {
         // log!("ticking");
-        let _timer = time::Timer::new("Universe::tick"); // will stop when dropped
+        // let _timer = time::Timer::new("Universe::tick"); // will stop when dropped
         let mut next = self.cells.clone();
 
         for row in 0..self.height {

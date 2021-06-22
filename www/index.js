@@ -15,6 +15,7 @@ const ALIVE_COLOR = "#FF55AA";
 let universe = Universe.new(100, 100, randSlider.value, new Date().getTime() / 1000);
 let width = universe.width();
 let height = universe.height();
+let play = false;
 
 const canvas = document.getElementById("game-of-life-canvas");
 canvas.height = (CELL_SIZE + 1) * height + 1;
@@ -22,6 +23,9 @@ canvas.width = (CELL_SIZE + 1) * width + 1;
 
 const ctx = canvas.getContext('2d');
   
+/**
+ * Draw grid onto canvas prior to painting cells
+ */
 const drawGrid = () => {
     ctx.beginPath();
     ctx.strokeStyle = GRID_COLOR;
@@ -41,10 +45,19 @@ const drawGrid = () => {
     ctx.stroke();
 };
 
+/**
+ * Get linear index from row and column indices
+ * @param {*} row Row index
+ * @param {*} column Column index
+ * @returns Linear index
+ */
 const getIndex = (row, column) => {
     return row * width + column;
 };
 
+/**
+ * Paint alive cells onto grid
+ */
 const drawCells = () => {
     const cellsPtr = universe.cells();
     const cells = new Uint8Array(memory.buffer, cellsPtr, width * height);
@@ -71,6 +84,9 @@ const drawCells = () => {
     ctx.stroke();
 };
 
+/**
+ * Single frame/step of game, tick universe, refresh UI
+ */
 const renderSingle = () => {
     // fps.render(); //new
     universe.tick();
@@ -79,53 +95,62 @@ const renderSingle = () => {
     drawCells();
 }
 
+/**
+ * Start interval timer to periodically iterate frames
+ */
 const start = () => {
     if(loop != null) clearInterval(loop);
     loop = setInterval(renderSingle, frameInterval);
 }
 
+/**
+ * Clear interval timer to stop animation loop
+ */
 const stop = () => {
     if(loop != null) clearInterval(loop);
     loop = null;
 }
 
-// const renderLoop = () => {
-//     if(PLAY){
-//         renderSingle();
-//         requestAnimationFrame(renderLoop);
-//     }
-// };
-
-// renderSingle();
-// requestAnimationFrame(renderLoop);
-
 var frameInterval = 50;
 // var loop = setInterval(renderSingle, frameInterval);
 var loop = null;
 
+// SLIDERS
+
 const frameSlider = document.getElementById("frameRate");
 const frameSliderLabel = document.getElementById("frameRate-label");
+/**
+ * Handler for frame interval slider change, stop, change interval, start
+ */
 const onFrameSlider = () => {
     stop();
 
     frameInterval = frameSlider.value;
-    frameSliderLabel.innerHTML = `Frame Interval: ${frameSlider.value}`;
+    frameSliderLabel.innerHTML = `Frame Interval: ${frameSlider.value}ms`;
 
-    if(playCheck.checked) start();
+    if(play) start();
 }
 frameSlider.onchange = onFrameSlider;
+frameSlider.value = 100;
 
+/**
+ * Handler for random threshold slider change, get a new universe with new threshold
+ */
 const onRandSlider = () => {
     stop();
 
     universe = Universe.new(width, height, randSlider.value, new Date().getTime() / 1000);
     refreshCanvas();
-    randSliderLabel.innerHTML = `Rand Threshold: ${randSlider.value}`;
+    randSliderLabel.innerHTML = `Random Threshold: ${randSlider.value}%`;
 
-    if(playCheck.checked) start();
+    if(play) start();
 }
 randSlider.onchange = onRandSlider;
+randSlider.value = 50;
 
+/**
+ * Refresh existing canvas, calculate dimensions and draw
+ */
 const refreshCanvas = () => {
     canvas.width = (CELL_SIZE + 1) * width + 1;
     canvas.height = (CELL_SIZE + 1) * height + 1;
@@ -133,7 +158,12 @@ const refreshCanvas = () => {
     drawCells();
 }
 
+// INPUT BOXES
+
 const widthBox = document.getElementById("width");
+/**
+ * Handler for width input box change, get a new universe of given size
+ */
 const onWidth = () => {
     // PLAY = false;
     width = widthBox.value;
@@ -145,6 +175,9 @@ const onWidth = () => {
 widthBox.onchange = onWidth;
 
 const heightBox = document.getElementById("height");
+/**
+ * Handler for height input box change, get a new universe of given size
+ */
 const onHeight = () => {
     // PLAY = false;
     height = heightBox.value;
@@ -155,26 +188,42 @@ const onHeight = () => {
 }
 heightBox.onchange = onHeight;
 
-const playCheck = document.getElementById("play-check");
+// BUTTONS
+
+/**
+ * Click handler for step button, make single move
+ */
 const onPlay = () => {
-    console.log("play: " + playCheck.checked);
-    if(playCheck.checked) {
+    play = !play;
+
+    // console.log("play: " + play);
+    if(play) {
+        playButton.classList.remove("btn-success");
+        playButton.classList.add("btn-danger");
+        playButton.innerText = "Stop";
         start();
     }else {
+        playButton.classList.add("btn-success");
+        playButton.classList.remove("btn-danger");
+        playButton.innerText = "Play";
         stop();
     }
-    // PLAY = playCheck.checked;
-    // requestAnimationFrame(renderLoop);
 }
-playCheck.onchange = onPlay;
+const playButton = document.getElementById("play");
+playButton.onclick = onPlay;
 
+/**
+ * Click handler for step button, make single move
+ */
 const onStep = () => {
     console.log("stepping");
     renderSingle();
 }
 document.getElementById("step").onclick = onStep;
 
-
+/**
+ * Click handler for reset button, generate a new universe and refresh the canvas
+ */
 const onReset = () => {
     universe = Universe.new(width, height, randSlider.value, new Date().getTime() / 1000);
     refreshCanvas();
@@ -183,46 +232,3 @@ document.getElementById("reset").onclick = onReset;
 
 drawGrid();
 drawCells();
-
-const fps = new class {
-    constructor() {
-      this.fps = document.getElementById("fps");
-      this.frames = [];
-      this.lastFrameTimeStamp = performance.now();
-    }
-  
-    render() {
-      // Convert the delta time since the last frame render into a measure
-      // of frames per second.
-      const now = performance.now();
-      const delta = now - this.lastFrameTimeStamp;
-      this.lastFrameTimeStamp = now;
-      const fps = 1 / delta * 1000;
-  
-      // Save only the latest 100 timings.
-      this.frames.push(fps);
-      if (this.frames.length > 100) {
-        this.frames.shift();
-      }
-  
-      // Find the max, min, and mean of our 100 latest timings.
-      let min = Infinity;
-      let max = -Infinity;
-      let sum = 0;
-      for (let i = 0; i < this.frames.length; i++) {
-        sum += this.frames[i];
-        min = Math.min(this.frames[i], min);
-        max = Math.max(this.frames[i], max);
-      }
-      let mean = sum / this.frames.length;
-  
-      // Render the statistics.
-      this.fps.textContent = `
-  Frames per Second:
-           latest = ${Math.round(fps)} // 
-  avg of last 100 = ${Math.round(mean)} // 
-  min of last 100 = ${Math.round(min)} // 
-  max of last 100 = ${Math.round(max)}
-  `.trim();
-    }
-  };

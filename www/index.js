@@ -1,9 +1,9 @@
-import { Universe, Cell, init } from "gameoflife";
+import { Universe, Cell, init_game } from "gameoflife";
 import { memory } from "gameoflife/gameoflife_bg.wasm";
 
 // let PLAY = true;
 // let PLAY = false;
-init();
+init_game();
 const randSlider = document.getElementById("randThreshold");
 const randSliderLabel = document.getElementById("randThreshold-label");
 

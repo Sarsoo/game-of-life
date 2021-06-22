@@ -21,11 +21,8 @@ jobs:
       - name: Build Rust for WASM
         run: wasm-pack build
 
-      - name: Test WASM on Firefox
-        run: wasm-pack test --firefox --headless
-
-      - name: Test WASM on Chrome
-        run: wasm-pack test --chrome --headless
+      - name: Test WASM in-browser
+        run: wasm-pack test --firefox --chrome --headless
 
       - name: Install Node
         uses: actions/setup-node@v2

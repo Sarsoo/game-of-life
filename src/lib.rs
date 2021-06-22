@@ -23,7 +23,7 @@ macro_rules! log {
 }
 
 #[wasm_bindgen]
-pub fn init() {
+pub fn init_game() {
     log!("initialising wasm");
     utils::set_panic_hook();
 

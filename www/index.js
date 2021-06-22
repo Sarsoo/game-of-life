@@ -7,7 +7,7 @@ init();
 const randSlider = document.getElementById("randThreshold");
 const randSliderLabel = document.getElementById("randThreshold-label");
 
-const CELL_SIZE = 5; // px
+const CELL_SIZE = 4; // px
 const GRID_COLOR = "#BBBBBB";
 const DEAD_COLOR = "#FFFFFF";
 const ALIVE_COLOR = "#FF55AA";
@@ -173,6 +173,7 @@ const onWidth = () => {
     // requestAnimationFrame(renderLoop);
 }
 widthBox.onchange = onWidth;
+widthBox.value = 100;
 
 const heightBox = document.getElementById("height");
 /**
@@ -187,6 +188,7 @@ const onHeight = () => {
     // requestAnimationFrame(renderLoop);
 }
 heightBox.onchange = onHeight;
+heightBox.value = 100;
 
 // BUTTONS
 

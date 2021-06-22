@@ -30,19 +30,24 @@
 <body>
     <div class="card container-xs text-center p-4 m-3">
         <div class="card-header">
-            <h1>Game of Life</h1>
+            <h1>Game of Life 🚀</h1>
         </div>
         <div class="card-body">
+            <div class="row p-1">
+                <div class="col-sm-12">
+                    <p class="text-muted">An implementation of the standard <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway Game of Life</a>. The game logic is written in WASM-targeted Rust with a light Js frontend. Read through the source code <a href="https://github.com/Sarsoo/game-of-life">here</a>. It was written following the guides in the <a href="https://rustwasm.github.io/docs/book">Rust & WebAssembly book</a>.</p>
+                </div>
+            </div>
             <div class="row p-3">
                 <div class="col-sm-6">
                     <input type="range" 
                         id="frameRate" 
                         name="frameRate" 
-                        min="1" max="500" value="50" 
+                        min="1" max="500" value="100" 
                         class="form-range">
                     <label for="frameRate" 
                         id="frameRate-label" 
-                        class="form-label">Frame Interval: 50</label>
+                        class="form-label">Frame Interval: 100ms</label>
                 </div>
                 <div class="col-sm-6">
                     <input type="range" 
@@ -52,7 +57,7 @@
                         class="form-range">
                     <label for="randThreshold" 
                         id="randThreshold-label" 
-                        class="form-label">Rand Threshold: 50</label>
+                        class="form-label">Random Threshold: 50%</label>
                 </div>
             </div>
             <div class="row p-3">
@@ -75,18 +80,19 @@
             </div>
             <div class="row p-3 align-items-center">
                 <div class="col-sm-6">
-                    <input type="checkbox" 
+                    <!-- <input type="checkbox" 
                         id="play-check" 
                         name="play-check" 
                         class="form-check-input">
-                    <label for="play-check">Play</label>
+                    <label for="play-check">Play</label> -->
+                    <button id="play" class="btn btn-success">Play</button>
                 </div>
                 <div class="col-sm-6">
                     <div class="row p-1">
-                        <button id="step" class="btn btn-primary">Step</button>
+                        <button id="step" class="btn btn-secondary">Step</button>
                     </div>
                     <div class="row p-1">
-                        <button id="reset" class="btn btn-primary">Reset</button>
+                        <button id="reset" class="btn btn-secondary">Reset</button>
                     </div>
                 </div>
             </div>
@@ -98,9 +104,7 @@
 
     <script src="./bootstrap.js"></script>
 
-    <img src="https://storage.googleapis.com/sarsooxyzstatic/andy.png" class=" pb-2" style="width: 150px" />
-
-    <!-- <div id="fps"></div> -->
+    <a href="https://github.com/sarsoo"><img src="https://storage.googleapis.com/sarsooxyzstatic/andy.png" class=" pb-2" style="width: 150px" /></a>
 </body>
 
 </html>

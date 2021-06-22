@@ -1,6 +1,8 @@
 Game of Life
 ===============
 
+![gof-ci](https://github.com/sarsoo/game-of-life/actions/workflows/test.yml/badge.svg)
+
 ## [Try it Out!](https://sarsoo.github.io/game-of-life/)
 
 WASM-based game of life following the [Rust WASM book](https://rustwasm.github.io/docs/book/introduction.html) tutorial.

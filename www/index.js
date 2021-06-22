@@ -72,7 +72,7 @@ const drawCells = () => {
 };
 
 const renderSingle = () => {
-    fps.render(); //new
+    // fps.render(); //new
     universe.tick();
   
     drawGrid();

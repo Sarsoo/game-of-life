@@ -33,6 +33,7 @@ features = [
 ]
 
 [dependencies.getrandom]
+version = "*"
 features = ["js"]
 
 [dev-dependencies]

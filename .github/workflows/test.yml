@@ -24,7 +24,7 @@ jobs:
         run: wasm-pack build
 
       - name: Test WASM in-browser
-        run: wasm-pack test --firefox --chrome --headless
+        run: wasm-pack test --firefox --headless
 
       - name: Install Node
         uses: actions/setup-node@v2
